@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 6.0"  # or ~> 5.0 if you're staying on 5
+      version = "~> 6.0" # or ~> 5.0 if you're staying on 5
     }
     tls = {
       source  = "hashicorp/tls"
@@ -46,13 +46,13 @@ resource "google_compute_instance" "debian_vm" {
   }
 
   metadata = {
-  ssh-keys = "${var.vm_username}:${tls_private_key.user_ssh_key.public_key_openssh}"
-  API_KEY      = var.api_key
-  PROFILE_NAME = var.profile_name
-  GIT_REPO_URL = var.git_repo_url
-}
+    ssh-keys     = "${var.vm_username}:${tls_private_key.user_ssh_key.public_key_openssh}"
+    API_KEY      = var.api_key
+    PROFILE_NAME = var.profile_name
+    GIT_REPO_URL = var.git_repo_url
+  }
 
-metadata_startup_script = <<-EOT
+  metadata_startup_script = <<-EOT
     #!/bin/bash
     exec > /var/log/startup-script.log 2>&1
     set -ex
@@ -84,7 +84,7 @@ metadata_startup_script = <<-EOT
     source install.sh
     "
   EOT
-  }
+}
 
 resource "local_file" "user_private_key" {
   filename        = "${path.module}/ssh_key"
