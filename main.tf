@@ -25,6 +25,30 @@ resource "tls_private_key" "user_ssh_key" {
   rsa_bits  = 4096
 }
 
+resource "google_compute_network" "vpc_network" {
+  name                    = var.vpc_name
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "subnet" {
+  name          = var.subnet_name
+  ip_cidr_range = "10.0.0.0/24"
+  region        = var.region
+  network       = google_compute_network.vpc_network.id
+}
+
+resource "google_compute_firewall" "default" {
+  name    = "allow-ssh"
+  network = google_compute_network.vpc_network.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
 resource "google_compute_instance" "debian_vm" {
   name         = var.vm_name
   machine_type = "c3-standard-4"
@@ -38,8 +62,9 @@ resource "google_compute_instance" "debian_vm" {
   }
 
   network_interface {
-    network    = var.vpc_name
-    subnetwork = var.subnet_name
+    network    = google_compute_network.vpc_network.id
+    subnetwork = google_compute_subnetwork.subnet.id
+
     access_config {
       network_tier = "PREMIUM"
     }
