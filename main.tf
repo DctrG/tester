@@ -38,7 +38,7 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_compute_firewall" "default" {
-  name    = "allow-ssh"
+  name    = "allow-ssh-tester"
   network = google_compute_network.vpc_network.name
 
   allow {
