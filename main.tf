@@ -37,8 +37,8 @@ resource "google_compute_subnetwork" "subnet" {
   network       = google_compute_network.vpc_network.id
 }
 
-resource "google_compute_firewall" "default" {
-  name    = "allow-ssh-tester"
+resource "google_compute_firewall" "ssh" {
+  name    = "allow-ssh-${var.vm_name}"
   network = google_compute_network.vpc_network.name
 
   allow {
@@ -117,13 +117,5 @@ resource "local_file" "user_private_key" {
   file_permission = "0600"
 }
 
-output "ssh_connection" {
-  value = <<EOT
-To connect to your VM, run:
-
-  ssh -i ${local_file.user_private_key.filename} ${var.vm_username}@${google_compute_instance.debian_vm.network_interface[0].access_config[0].nat_ip}
-
-EOT
-}
 
 
